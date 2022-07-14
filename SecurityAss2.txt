@@ -1,0 +1,72 @@
+alphabets_in_surname = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*&^%$#@!?.:;',/\|-+ "
+encrypt = ' '
+decrypt = ' '
+c = 3
+b = 5
+
+def get_surname():
+    surname = input('Please enter your surname: ')
+    return surname
+
+def encrypt(surname):
+    encrypt = ""
+    characters=surname[-4:]
+    parity=""
+    print('Last 4 bits of Surname :'+str(characters))
+    string_to_binary="".join(format(ord(i),"b")for i in characters)
+    print(string_to_binary)
+    count = 0
+    for i in string_to_binary:
+        if i=="1":
+            count+=1
+    print('Parity number used to check if its odd or even: '+str(count))
+    if count%2==0:
+        parity=0
+    else:
+        parity=1
+    s_name=surname.lower()
+    for i in s_name:
+        position = alphabets_in_surname.find(i)
+        new_position = (c * position + b) %82
+        encrypt += alphabets_in_surname[new_position]
+    print('Encrypted text :' + encrypt)
+
+    encrypt+=str(parity)
+    print('Encrption with parity bit :' + encrypt)
+    return encrypt
+
+def decrypt(ciphertext):
+    decrypt = ""
+    checkingbits=ciphertext[-1:]
+    ciphertext= ciphertext[:-1]
+    for i in ciphertext:
+        position = alphabets_in_surname.find(i)
+        new_position = ( position - b) /c %82
+        decrypt += alphabets_in_surname[int(new_position)]
+    print('Your decrypted surname is :' + decrypt)
+    parity=""
+    characters=decrypt[-4:]
+    string_to_binary=''.join(format(ord(i),'b')for i in characters)
+    print(string_to_binary)
+    count = 0
+    for i in string_to_binary:
+        if i == "1":
+            count += 1
+    if count % 2 == 0:
+        parity = 0
+    else:
+        parity = 1
+    print(" The parity bit is : "+ str(parity))
+    if parity==int(checkingbits):
+        print(" The parity bits  are similar ")
+    else:
+        print("The parity bits are not the similar ")
+    return decrypt
+
+
+def main():
+    ciphertext = encrypt(get_surname())
+    surname = decrypt(ciphertext)
+
+if __name__ == "__main__":
+    main()
